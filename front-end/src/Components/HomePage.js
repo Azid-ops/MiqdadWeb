@@ -12,10 +12,8 @@ export default function HomePage() {
 
     async function fetchData() {
 
-        console.log("Use effect was called");
 
         if (!localStorage.getItem("userToken")) {
-            console.log("did not find a user Token\nnavigating to login");
             navigate("/");
         }
 
@@ -35,9 +33,7 @@ export default function HomePage() {
             setWait(false);
         }
         else if (response.status === 200) {
-            console.log("The response was 200");
             let responseObject = await JSON.parse(await response.text());
-            console.log(responseObject);
             setData(responseObject);
             setWait(false);
         }
@@ -50,9 +46,6 @@ export default function HomePage() {
         fetchData();
     }, [])
 
-    console.log("Got to home");
-    console.log("wait: ", wait);
-    console.log("data: ", data);
 
     if (wait)
         return (<Pendulum />)

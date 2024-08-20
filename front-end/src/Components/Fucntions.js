@@ -12,7 +12,6 @@ export const onChangeHandler = (event, data, setData) => {
 }
 
 export const onClickHandler = async (route, method, navigate, data) => {
-    console.log("in the on click handler for the "+method);
     const response = await fetch(`/${route}`, {
         method: method,
         headers: {
@@ -29,7 +28,6 @@ export const onClickHandler = async (route, method, navigate, data) => {
     })
 
     if (response.status === 200) {
-        console.log("navigate");
         navigate('/Home');
     }
 }
@@ -46,7 +44,6 @@ export async function apiCall(navigate, setError, data) {
                 userName: data['userName'], userPassword: data['userPassword'], userEmail: data['userEmail'],
             })
         });
-        console.log(response.status);
         if (response.status === 200) {
             setError(false);
             navigate("/", { state: { email: data['userEmail'] } });
@@ -58,7 +55,6 @@ export async function apiCall(navigate, setError, data) {
 }
 
 export const buttonHandlerSignOut = (navigate) => {
-    console.log("buttonHandlerSignOut was called");
     localStorage.removeItem("userToken");
     navigate('/');
 }
@@ -78,7 +74,6 @@ export const buttonHandlerDelete = async (buttonHandlerSignOut, navigate) => {
     
     if(deleteResponse.status === 200)
     {
-      console.log("Account successfully deleted");
       buttonHandlerSignOut(navigate);
     }
 }

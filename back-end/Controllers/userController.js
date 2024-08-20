@@ -1,11 +1,9 @@
 const userData = require("../Schema/userData");
 const userDetails = require("../Schema/Details");
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const SALT = 10
 
 const Registration = async (req, res) => {
-    console.log("starting")
+    const bcrypt = require('bcrypt');
+    const SALT = 10
     const { userName, userEmail, userPassword } = req.body;
 
     const data = new userData({
@@ -19,7 +17,6 @@ const Registration = async (req, res) => {
             res.status(404).json({ message: "There is already an account assosiated with this email" });
         else {
             await data.save().then(() => {
-                console.log("Status ja ra he ???")
                 res.status(200).json({ message: "Data saved" });
             }).catch(err => {
                 console.error(err);
@@ -33,44 +30,42 @@ const Registration = async (req, res) => {
 }
 
 const login = async (req, res) => {
+    const bcrypt = require('bcrypt');
     // encodeURIComponent() use this in the front end
-    console.log('starting login');
     const { userEmail, userPassword } = req.body;
-    console.log(userEmail, userPassword);
 
     userData.findOne({ schemaEmail: userEmail }).then(async user => {
+        const jwt = require('jsonwebtoken');
         if (user && await bcrypt.compare(userPassword, user.schemaPassword)) {
             const token = jwt.sign({ ID: user._id, userName: user.schemaName }, process.env.SECRET_KEY)
-            res.status(200).json({ message: "Nigga you back? Eat my shit", token });
+            res.status(200).json({ message: "Welcome back", token });
         }
         else if (!user)
-            res.status(403).json({ message: "There aint no nigga like that" });
+            res.status(403).json({ message: "No account associated with this mail" });
         else
-            res.status(403).json({ message: "You typing password incorrecctly nigga" });
+            res.status(403).json({ message: "Incorrect Password" });
     }).catch(
         err => {
             console.error(err);
-            res.status(404).json("You playing with me nigga, there aint no data like this here ya black ass bitch");
+            res.status(404).json("Some Error in the data base");
         }
     );
 }
 
 const getDetails = async (req, res) => {
-    console.log("starting get details");
     const payload = req.user;
 
     userDetails.findOne({ _id: payload.ID }).then(async user => {
         if (user)
             res.status(200).json(user);
         else
-            res.status(403).json("Nigaa you playing with me here");
+            res.status(403).json("Could not find the details");
     }).catch(err => {
         res.status(404).json("Some problem with the data base");
     })
 }
 
 const setDetails = async (req, res) => {
-    console.log("starting set details");
     const { userFirstName, userLastName, userAge, userGender, userProfession } = req.body;
 
     const data = userDetails({
@@ -83,16 +78,13 @@ const setDetails = async (req, res) => {
     })
 
     await data.save().then(() => {
-        console.log("insode then");
         res.status(200).json({ message: "Details were saved" });
     }).catch(err => {
-        console.log("insode catch");
         res.status(404).json(err);
     })
 }
 
 const updateDetails = async (req, res) => {
-    console.log("starting update details");
     const { userFirstName, userLastName, userAge, userGender, userProfession } = req.body;
     const temp = {}
 
@@ -109,13 +101,11 @@ const updateDetails = async (req, res) => {
         else
             res.status(404).json("User not found");
     }).catch(error => {
-        console.log(error);
         res.status(404).json("Some problem with the database");
     })
 }
 
 const deleteUser = async (req, res) => {
-    console.log("starting delete user");
     const ID = req.user.ID;
     userData.findOneAndDelete({_id: ID}).then(user=>{
         if(user)
@@ -124,12 +114,10 @@ const deleteUser = async (req, res) => {
                 if(details)
                     res.status(200).json("User was successfully deleted");
             }).catch(error=>{
-                console.log(error);
                 res.status(404).json("Some problem with the database");
             });
         }
     }).catch(error=>{
-        console.log(error);
         res.status(404).json("Some problem with the database");
     });
 }

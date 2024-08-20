@@ -1,7 +1,5 @@
-const jwt = require('jsonwebtoken');
-
 const verifyUser = (req, res, next) => {
-    console.log("verify user is runnig");
+    const jwt = require('jsonwebtoken');
     const authorize = req.headers.authorization || req.headers.Authorization;
     if (authorize && authorize.startsWith("Bearer ")) {
         const token = authorize.substring(7, authorize.length);
